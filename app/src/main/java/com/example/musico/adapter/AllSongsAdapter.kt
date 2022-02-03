@@ -1,8 +1,12 @@
 package com.example.musico.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
+import android.net.Uri
 import android.service.autofill.OnClickAction
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -17,9 +21,9 @@ import com.example.musico.SongStateUi
 import com.example.musico.databinding.VerticalMusicaverItemBinding
 import com.example.musico.formatDuration
 
-class AllSongsAdapter (
+class AllSongsAdapter(
     private val values: List<SongStateUi>, private val context: Context
-): RecyclerView.Adapter<AllSongsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AllSongsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -33,6 +37,7 @@ class AllSongsAdapter (
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
         if (item.title.length > 30) holder.itemTitle.text = minimizeSongTitle(item.title)
@@ -43,11 +48,13 @@ class AllSongsAdapter (
             .load(item.coverUri)
             .apply(RequestOptions().placeholder(R.drawable.music_caver_img).centerCrop())
             .into(holder.itemCover)
-
-        holder.root.setOnClickListener {
-            Toast.makeText(context, "song ${item.title} is playing", Toast.LENGTH_SHORT).show()
+        holder.playBtn.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                return@setOnTouchListener true
+            }
+            Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+            return@setOnTouchListener true
         }
-
 
 
     }
@@ -65,7 +72,7 @@ class AllSongsAdapter (
         val itemArtists: TextView = binding.songArtiste
         val itemDuration: TextView = binding.songDuration
         val itemCover: ImageView = binding.verticalCoverImage
-        val root = binding.root
+        val playBtn = binding.rcPlayBtn
 
     }
 }

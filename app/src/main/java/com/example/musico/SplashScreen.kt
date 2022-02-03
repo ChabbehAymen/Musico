@@ -13,7 +13,6 @@ import com.example.musico.placeholder.RandomPickerPlaceHolder
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
-    private val viewModel: MViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)

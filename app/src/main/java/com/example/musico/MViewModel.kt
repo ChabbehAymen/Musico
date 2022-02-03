@@ -23,7 +23,7 @@ class MViewModel : ViewModel() {
     val songsHistory get() = _songsHistory
 
 
-    fun main(){
+    fun main() {
         loadData()
         addRandomSongs()
     }
@@ -41,33 +41,51 @@ class MViewModel : ViewModel() {
             MediaStore.Audio.Media.DATA,
             MediaStore.Audio.Media.ALBUM_ID
         )
-        val cursor = context?.contentResolver?.query(uri, projection, selection,null, MediaStore.Audio.Media.DATE_ADDED,null)
+        val cursor = context?.contentResolver?.query(
+            uri,
+            projection,
+            selection,
+            null,
+            MediaStore.Audio.Media.DATE_ADDED,
+            null
+        )
         if (cursor != null)
             if (cursor.moveToFirst())
                 do {
-                    val title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    val title =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                     val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                    val artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                    val duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val artist =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    val duration =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                    val albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                    val uri  = Uri.parse("content://media/external/audio/albumart")
+                    val albumId =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
+                    val uri = Uri.parse("content://media/external/audio/albumart")
                     val artUri = Uri.withAppendedPath(uri, albumId.toString()).toString()
-                    val song = SongStateUi(id = id, title = title, artist = artist, duration = duration, path = path, coverUri = artUri)
+                    val song = SongStateUi(
+                        id = id,
+                        title = title,
+                        artist = artist,
+                        duration = duration,
+                        path = path,
+                        coverUri = artUri
+                    )
                     val file = File(song.path)
                     if (file.exists())
                         _songs.add(song)
 
-                }while (cursor.moveToNext())
-                cursor?.close()
+                } while (cursor.moveToNext())
+        cursor?.close()
     }
 
-    private fun addRandomSongs(){
+    private fun addRandomSongs() {
         _randomSongs.add(pickRandomSong())
 
     }
 
-    private fun pickRandomSong(): SongStateUi{
+    private fun pickRandomSong(): SongStateUi {
         return songs.random()
     }
 

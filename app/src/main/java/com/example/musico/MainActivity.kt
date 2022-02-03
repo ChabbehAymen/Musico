@@ -1,14 +1,17 @@
 package com.example.musico
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.utils.widget.MotionButton
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musico.adapter.AllSongsAdapter
@@ -18,14 +21,17 @@ import com.example.musico.databinding.ActivityMainBinding
 import com.example.musico.placeholder.AllSongsPlaceHolder
 import com.example.musico.placeholder.HistoryItemPlaceHolder
 import com.example.musico.placeholder.RandomPickerPlaceHolder
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    val context = this
     private var isHiding = false
     private val viewModel: MViewModel by viewModels()
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestRunTimePermission()
+
+        binding.playedSongAlbum.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                return@setOnTouchListener true
+            }
+            showMusicPlayer()
+            return@setOnTouchListener true
+        }
         viewModel.context = this
         viewModel.main()
 
@@ -60,12 +74,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
-
     }
 
-
+    private fun showMusicPlayer() {
+        val bottomSheetPlayer = PlayerFragment()
+        bottomSheetPlayer.show(supportFragmentManager, bottomSheetPlayer.tag)
+    }
 
     private fun scrollUpHandler() {
         if (isHiding) {
